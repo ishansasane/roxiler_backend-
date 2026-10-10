@@ -5,14 +5,31 @@ import { errorHandler } from './middleware/error.middleware.js';
 
 const app = express();
 
-// Middleware
+// Middleware: allow requests from local Vite dev server and deployed frontend
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: (origin, callback) => callback(null, true),
     credentials: true,
   })
 );
 app.use(express.json());
+
+// Root welcome endpoint
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Store Rating Platform API is running smoothly 🚀',
+    version: '1.0.0',
+    healthCheck: '/api/health',
+    endpoints: {
+      auth: '/api/auth',
+      stores: '/api/stores',
+      users: '/api/users',
+      ratings: '/api/ratings',
+      dashboard: '/api/dashboard',
+    },
+  });
+});
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
