@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding database...');
+  console.log('🌱 Seeding database...');
 
   await prisma.rating.deleteMany();
   await prisma.store.deleteMany();
@@ -12,155 +12,177 @@ async function main() {
 
   const password = await bcrypt.hash('Password@123', 10);
 
+  // 1. Admin
   const admin = await prisma.user.create({
     data: {
-      name: 'System Administrator Officer',
-      email: 'admin@storerating.com',
+      name: 'Pune Platform Administrator',
+      email: 'admin@punehotelrating.in',
       password,
-      address: '742 Evergreen Terrace, Sector 12, Tech Park, Suite 400',
+      address: 'Office 204, Business Bay, Airport Road, Yerwada, Pune, Maharashtra 411006',
       role: 'ADMIN',
     },
   });
 
-  const owners = await Promise.all([
-    prisma.user.create({
-      data: {
-        name: 'Alexander Christopher Smith',
-        email: 'alexander.smith@organicmarket.com',
-        password,
-        address: '104 High Street, West Commercial District, Block A',
-        role: 'STORE_OWNER',
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'Victoria Elizabeth Martinez',
-        email: 'victoria.martinez@artiscoffee.com',
-        password,
-        address: '255 River Boulevard, Central Uptown, Floor 2',
-        role: 'STORE_OWNER',
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'Benjamin Franklin Washington',
-        email: 'benjamin.washington@metroelectronics.com',
-        password,
-        address: '89 Innovation Parkway, Silicon Center, Building 4',
-        role: 'STORE_OWNER',
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'Eleanor Catherine Vance',
-        email: 'eleanor.vance@bakerycafe.com',
-        password,
-        address: '312 Maple Avenue, Meadow Hills, Suite 10',
-        role: 'STORE_OWNER',
-      },
-    }),
-  ]);
-
-  const users = await Promise.all([
-    prisma.user.create({
-      data: {
-        name: 'Jonathan Edward Henderson',
-        email: 'user1@example.com',
-        password,
-        address: '12 Blossom Lane, North Valley, Apt 3B',
-        role: 'USER',
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'Samantha Grace Williamson',
-        email: 'user2@example.com',
-        password,
-        address: '48 Pine Needle Way, Southside, House 12',
-        role: 'USER',
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'David Bartholomew Peterson',
-        email: 'user3@example.com',
-        password,
-        address: '900 Ocean Drive, Coastal Vista, Unit 701',
-        role: 'USER',
-      },
-    }),
-    prisma.user.create({
-      data: {
-        name: 'Emily Charlotte Richardson',
-        email: 'user4@example.com',
-        password,
-        address: '77 Forest Glen Circle, Woodbury County',
-        role: 'USER',
-      },
-    }),
-  ]);
-
-  const stores = await Promise.all([
-    prisma.store.create({
-      data: {
-        name: 'Downtown Organic Supermarket',
-        email: 'contact@organicmarket.com',
-        address: '104 High Street, West Commercial District, City Center',
-        ownerId: owners[0].id,
-      },
-    }),
-    prisma.store.create({
-      data: {
-        name: 'Greenwood Artisan Coffee Hub',
-        email: 'contact@artiscoffee.com',
-        address: '255 River Boulevard, Central Uptown, Waterfront',
-        ownerId: owners[1].id,
-      },
-    }),
-    prisma.store.create({
-      data: {
-        name: 'Metropolitan Tech Electronics',
-        email: 'support@metroelectronics.com',
-        address: '89 Innovation Parkway, Silicon Center, City',
-        ownerId: owners[2].id,
-      },
-    }),
-    prisma.store.create({
-      data: {
-        name: 'Evergreen Gourmet Bakery Cafe',
-        email: 'hello@bakerycafe.com',
-        address: '312 Maple Avenue, Meadow Hills, City',
-      },
-    }),
-  ]);
-
-  const ratings = [
-    { userId: users[0].id, storeId: stores[0].id, rating: 5 },
-    { userId: users[1].id, storeId: stores[0].id, rating: 4 },
-    { userId: users[2].id, storeId: stores[0].id, rating: 5 },
-    { userId: users[0].id, storeId: stores[1].id, rating: 4 },
-    { userId: users[1].id, storeId: stores[1].id, rating: 4 },
-    { userId: users[3].id, storeId: stores[1].id, rating: 5 },
-    { userId: users[1].id, storeId: stores[2].id, rating: 3 },
-    { userId: users[2].id, storeId: stores[2].id, rating: 4 },
-    { userId: users[0].id, storeId: stores[3].id, rating: 5 },
-    { userId: users[3].id, storeId: stores[3].id, rating: 4 },
+  // 2. Store Owners (sequential to respect PgBouncer pooling)
+  const ownersData = [
+    {
+      name: 'Sandeep Dattatray Joshi',
+      email: 'sandeep.joshi@hotelsahyadri.in',
+      address: 'Flat 9, Ganesh Apartments, Shivajinagar, Pune, Maharashtra 411005',
+    },
+    {
+      name: 'Vaishali Prakash Deshpande',
+      email: 'vaishali.deshpande@malhargarden.in',
+      address: 'B-14, Sai Residency, Baner Road, Baner, Pune, Maharashtra 411045',
+    },
+    {
+      name: 'Prashant Ramchandra Patil',
+      email: 'prashant.patil@peshwawada.in',
+      address: '112 Budhwar Peth, Near Shaniwar Wada, Pune, Maharashtra 411002',
+    },
+    {
+      name: 'Imtiyaz Abdul Shaikh',
+      email: 'imtiyaz.shaikh@rajwadabiryani.in',
+      address: '27 Moledina Road, Camp, Pune, Maharashtra 411001',
+    },
+    {
+      name: 'Meenakshi Suresh Iyer',
+      email: 'meenakshi.iyer@aapleghar.in',
+      address: 'A-302, Magarpatta City, Hadapsar, Pune, Maharashtra 411028',
+    },
+    {
+      name: 'Nilesh Bhaskar Gokhale',
+      email: 'nilesh.gokhale@kokankatta.in',
+      address: '5 Karve Road, Near Mhatre Bridge, Kothrud, Pune, Maharashtra 411038',
+    },
   ];
 
-  await prisma.rating.createMany({ data: ratings });
+  const owners = [];
+  for (const o of ownersData) {
+    owners.push(await prisma.user.create({ data: { ...o, password, role: 'STORE_OWNER' } }));
+  }
 
-  console.log('Database seeded successfully.');
-  console.log(`Admin: ${admin.email}`);
-  console.log(`Created ${owners.length} store owners.`);
-  console.log(`Created ${users.length} users.`);
-  console.log(`Created ${stores.length} stores.`);
-  console.log(`Created ${ratings.length} ratings.`);
+  // 3. Normal Users (sequential)
+  const usersData = [
+    {
+      name: 'Rohan Anilkumar Kulkarni',
+      email: 'rohan.kulkarni@gmail.com',
+      address: 'Flat 6, Kalpataru Society, Sadashiv Peth, Pune, Maharashtra 411030',
+    },
+    {
+      name: 'Priyanka Sanjay Bhosale',
+      email: 'priyanka.bhosale@gmail.com',
+      address: 'C-208, Amanora Park Town, Hadapsar, Pune, Maharashtra 411028',
+    },
+    {
+      name: 'Aditya Vijay Deshmukh',
+      email: 'aditya.deshmukh@outlook.com',
+      address: '45 Lane 7, Koregaon Park, Pune, Maharashtra 411001',
+    },
+    {
+      name: 'Snehal Rameshwar Chavan',
+      email: 'snehal.chavan@gmail.com',
+      address: 'Row House 3, Sector 27, Nigdi Pradhikaran, Pimpri-Chinchwad, Maharashtra 411044',
+    },
+    {
+      name: 'Amitkumar Shankar Gaikwad',
+      email: 'amit.gaikwad@yahoo.in',
+      address: 'D-19, Pride Residency, Wakad, Pune, Maharashtra 411057',
+    },
+    {
+      name: 'Nehal Dinkarrao Pawar',
+      email: 'nehal.pawar@gmail.com',
+      address: '8 Rutuja Society, Karve Nagar, Pune, Maharashtra 411052',
+    },
+  ];
+
+  const users = [];
+  for (const u of usersData) {
+    users.push(await prisma.user.create({ data: { ...u, password, role: 'USER' } }));
+  }
+
+  // 4. Stores (sequential) - mostly Pune hotels
+  const storesData = [
+    {
+      name: 'Hotel Sahyadri Residency',
+      email: 'contact@hotelsahyadri.in',
+      address: '1198 FC Road, Shivajinagar, Pune, Maharashtra 411005',
+      ownerId: owners[0].id,
+    },
+    {
+      name: 'Hotel Malhar Garden Restaurant',
+      email: 'hello@malhargarden.in',
+      address: 'Survey 52, Baner-Pashan Link Road, Baner, Pune, Maharashtra 411045',
+      ownerId: owners[1].id,
+    },
+    {
+      name: 'Hotel Peshwa Wada Misal House',
+      email: 'info@peshwawada.in',
+      address: '112 Budhwar Peth, Near Shaniwar Wada, Pune, Maharashtra 411002',
+      ownerId: owners[2].id,
+    },
+    {
+      name: 'Hotel Rajwada Biryani House',
+      email: 'orders@rajwadabiryani.in',
+      address: '27 Moledina Road, Camp, Pune, Maharashtra 411001',
+      ownerId: owners[3].id,
+    },
+    {
+      name: 'Hotel Aaple Ghar Veg Thali',
+      email: 'contact@aapleghar.in',
+      address: 'Shop 4, Solapur Road, Hadapsar, Pune, Maharashtra 411028',
+      ownerId: owners[4].id,
+    },
+    {
+      name: 'Hotel Kokan Katta Seafood',
+      email: 'bookings@kokankatta.in',
+      address: '5 Karve Road, Near Mhatre Bridge, Kothrud, Pune, Maharashtra 411038',
+      ownerId: owners[5].id,
+    },
+    {
+      name: 'Hotel Sai Palace Lodging',
+      email: 'saipalace.pcmc@gmail.com',
+      address: 'Old Mumbai-Pune Highway, Pimpri, Pimpri-Chinchwad, Maharashtra 411018',
+      ownerId: null,
+    },
+    {
+      name: 'Shree Ganesh Sweets & Farsan',
+      email: 'shreeganeshsweets.pune@gmail.com',
+      address: '310 Tilak Road, Sadashiv Peth, Pune, Maharashtra 411030',
+      ownerId: null,
+    },
+  ];
+
+  const stores = [];
+  for (const s of storesData) {
+    stores.push(await prisma.store.create({ data: s }));
+  }
+
+  // 5. Ratings: [userIndex, storeIndex, rating]
+  const ratings: [number, number, number][] = [
+    [0, 0, 4], [1, 0, 5], [2, 0, 4], [4, 0, 4],
+    [0, 1, 5], [2, 1, 4], [3, 1, 5], [5, 1, 4],
+    [0, 2, 5], [1, 2, 5], [3, 2, 4], [4, 2, 5], [5, 2, 5],
+    [1, 3, 4], [2, 3, 5], [4, 3, 3],
+    [0, 4, 4], [3, 4, 4], [5, 4, 5],
+    [1, 5, 5], [2, 5, 4], [4, 5, 5],
+    [0, 6, 3], [3, 6, 2], [5, 6, 3],
+    [1, 7, 5], [2, 7, 4], [4, 7, 4],
+  ];
+
+  for (const [u, s, rating] of ratings) {
+    await prisma.rating.create({
+      data: { userId: users[u].id, storeId: stores[s].id, rating },
+    });
+  }
+
+  console.log('✅ Seeding completed successfully!');
 }
 
 main()
-  .catch((error) => {
-    console.error('Seeding failed:', error);
-    process.exitCode = 1;
+  .catch((e) => {
+    console.error('Seeding failed:', e);
+    process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();
